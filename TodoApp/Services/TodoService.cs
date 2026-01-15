@@ -46,12 +46,64 @@ namespace TodoApp.Services
 
         public void CompleteTodo()
         {
-            Console.WriteLine("Voltooien komt later.");
+            if (_todos.Count == 0)
+            {
+                Console.WriteLine("Er zijn geen taken om te voltooien.");
+                return;
+            }
+
+            ShowTodos();
+            Console.Write("Voer het ID in van de taak die je wilt voltooien: ");
+            var input = Console.ReadLine();
+
+            if (!int.TryParse(input, out int id))
+            {
+                Console.WriteLine("Ongeldig ID.");
+                return;
+            }
+
+            var todo = _todos.FirstOrDefault(t => t.Id == id);
+
+            if (todo == null)
+            {
+                Console.WriteLine("Taak niet gevonden.");
+                return;
+            }
+
+            todo.IsCompleted = true;
+            Console.WriteLine("Taak gemarkeerd als voltooid.");
         }
+
 
         public void DeleteTodo()
         {
-            Console.WriteLine("Verwijderen komt later.");
+            if (_todos.Count == 0)
+            {
+                Console.WriteLine("Er zijn geen taken om te verwijderen.");
+                return;
+            }
+
+            ShowTodos();
+            Console.Write("Voer het ID in van de taak die je wilt verwijderen: ");
+            var input = Console.ReadLine();
+
+            if (!int.TryParse(input, out int id))
+            {
+                Console.WriteLine("Ongeldig ID.");
+                return;
+            }
+
+            var todo = _todos.FirstOrDefault(t => t.Id == id);
+
+            if (todo == null)
+            {
+                Console.WriteLine("Taak niet gevonden.");
+                return;
+            }
+
+            _todos.Remove(todo);
+            Console.WriteLine("Taak verwijderd.");
         }
+
     }
 }
