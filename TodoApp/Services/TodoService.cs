@@ -7,7 +7,9 @@ namespace TodoApp.Services
     {
         private readonly List<TodoItem> _todos = new();
         private int _nextId = 1;
-        private readonly string _filePath = "todos.json";
+        private readonly string _filePath =
+        Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "todos.json");
+
 
         private void SaveToFile()
         {
