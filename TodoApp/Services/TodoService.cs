@@ -1,4 +1,5 @@
-﻿using TodoApp.Models;
+﻿using System.Text.Json;
+using TodoApp.Models;
 
 namespace TodoApp.Services
 {
@@ -6,6 +7,41 @@ namespace TodoApp.Services
     {
         private readonly List<TodoItem> _todos = new();
         private int _nextId = 1;
+        private readonly string _filePath = "todos.json";
+
+        private void SaveToFile()
+        {
+            var json = JsonSerializer.Serialize(_todos, new JsonSerializerOptions
+            {
+                WriteIndented = true
+            });
+
+            File.WriteAllText(_filePath, json);
+        }
+
+        private void LoadFromFile()
+        {
+            if (!File.Exists(_filePath))
+                return;
+
+            var json = File.ReadAllText(_filePath);
+            var loadedTodos = JsonSerializer.Deserialize<List<TodoItem>>(json);
+
+            if (loadedTodos == null)
+                return;
+
+            _todos.Clear();
+            _todos.AddRange(loadedTodos);
+
+            if (_todos.Count > 0)
+                _nextId = _todos.Max(t => t.Id) + 1;
+        }
+
+        public TodoService()
+        {
+            LoadFromFile();
+        }
+
 
         public void ShowTodos()
         {
@@ -41,6 +77,7 @@ namespace TodoApp.Services
             };
 
             _todos.Add(todo);
+            SaveToFile();
             Console.WriteLine("Taak toegevoegd!");
         }
 
@@ -71,6 +108,7 @@ namespace TodoApp.Services
             }
 
             todo.IsCompleted = true;
+            SaveToFile();
             Console.WriteLine("Taak gemarkeerd als voltooid.");
         }
 
@@ -102,6 +140,7 @@ namespace TodoApp.Services
             }
 
             _todos.Remove(todo);
+            SaveToFile();
             Console.WriteLine("Taak verwijderd.");
         }
 
